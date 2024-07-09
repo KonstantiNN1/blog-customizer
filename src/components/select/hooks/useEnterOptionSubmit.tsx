@@ -2,28 +2,28 @@ import { useEffect } from 'react';
 import { OptionType } from 'src/constants/articleProps';
 
 type UseEnterOptionSubmit = {
-	onClick: (value: OptionType['value']) => void;
-	value: OptionType['value'];
-	optionRef: React.RefObject<HTMLLIElement>;
+  	onClick: (option: OptionType) => void;
+  	option: OptionType;
+  	optionRef: React.RefObject<HTMLLIElement>;
 };
 
 export const useEnterOptionSubmit = ({
-	onClick,
-	value,
-	optionRef,
+  	onClick,
+  	option,
+  	optionRef,
 }: UseEnterOptionSubmit) => {
-	useEffect(() => {
-		const option = optionRef.current;
-		if (!option) return;
-		const handleEnterKeyDown = (event: KeyboardEvent) => {
-			if (document.activeElement === option && event.key === 'Enter') {
-				onClick(value);
-			}
-		};
+  	useEffect(() => {
+    	const currentOption = optionRef.current;
+   		if (!currentOption) return;
+    	const handleEnterKeyDown = (event: KeyboardEvent) => {
+      		if (document.activeElement === currentOption && event.key === 'Enter') {
+        		onClick(option);
+      		}
+    	};
 
-		option.addEventListener('keydown', handleEnterKeyDown);
-		return () => {
-			option.removeEventListener('keydown', handleEnterKeyDown);
-		};
-	}, [value, onClick, optionRef]);
+    	currentOption.addEventListener('keydown', handleEnterKeyDown);
+    	return () => {
+      		currentOption.removeEventListener('keydown', handleEnterKeyDown);
+    	};
+  	}, [option, onClick, optionRef]);
 };

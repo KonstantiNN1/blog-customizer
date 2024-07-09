@@ -4,17 +4,37 @@
 	justify-content: center;
 	align-items: center;
 	row-gap: 24px;
-	max-width: var(--container-width, auto);
+	max-width: var(--container-width);
 	margin: 0 auto;
 	padding: 72px 0 144px;
+	font-family: var(--font-family);
+	font-size: var(--font-size);
+	color: var(--font-color);
 }
-
+  
 .titleDescription {
 	max-width: 550px;
 }
-
+  
 .image {
 	width: 100%;
 	height: auto;
 	margin-top: 26px;
 }
+  
+.open-sans {
+	font-family: 'Open Sans', sans-serif;
+}
+  
+.cormorant-garamond {
+	font-family: 'Cormorant Garamond', serif;
+}
+  
+.days-one {
+	font-family: 'Days One', sans-serif;
+}
+  
+.merriweather {
+	font-family: 'Merriweather', serif;
+}
+  

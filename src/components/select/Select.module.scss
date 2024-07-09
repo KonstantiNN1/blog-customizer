@@ -1,11 +1,14 @@
 .selectWrapper {
 	position: relative;
+	height: 48px;
 }
 
 .container {
 	display: flex;
 	flex-direction: column;
 	row-gap: 4px;
+	height: 100%;
+	width: 100%;
 }
 
 .arrow {
@@ -39,12 +42,12 @@
 }
 
 .selectWrapper[data-is-active='true'] .placeholder {
-	outline: 3px solid #000000;
+	outline: 1px solid #FFC802;
 }
 
 .selectWrapper:not([data-is-active='true'])
 	.placeholder:not([data-status='invalid']):hover {
-	outline: 3px solid #000000;
+	outline: 1px solid #FFC802;
 }
 
 .select {
@@ -59,6 +62,8 @@
 	background-color: rgb(255 255 255 / 100%);
 	border-top: none;
 	outline: 3px solid #000000;
+	max-height: 200px;
+	overflow-y: auto;
 }
 
 .option {
