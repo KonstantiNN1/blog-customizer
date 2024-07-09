@@ -4,13 +4,7 @@ import { Button } from 'components/button';
 import { Select } from 'components/select/Select';
 import { RadioGroup } from 'components/radio-group/RadioGroup';
 import { Separator } from 'components/separator/Separator';
-import {
-	fontFamilyOptions,
-	fontColors,
-	backgroundColors,
-	contentWidthArr,
-	fontSizeOptions,
-	OptionType } from 'src/constants/articleProps';
+import { fontFamilyOptions, fontColors, backgroundColors, contentWidthArr, fontSizeOptions, OptionType } from 'src/constants/articleProps';
 import styles from './ArticleParamsForm.module.scss';
 import wideIcon from 'src/images/wide.svg';
 import narrowIcon from 'src/images/narrow.svg';
