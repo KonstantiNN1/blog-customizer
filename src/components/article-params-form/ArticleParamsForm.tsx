@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect, useRef } from 'react';
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import { Select } from 'components/select/Select';
@@ -8,32 +8,47 @@ import { fontFamilyOptions, fontColors, backgroundColors, contentWidthArr, fontS
 import styles from './ArticleParamsForm.module.scss';
 import wideIcon from 'src/images/wide.svg';
 import narrowIcon from 'src/images/narrow.svg';
+import { Text } from 'components/text';
+import { defaultArticleState } from 'src/constants/articleProps';
 
 interface ArticleParamsFormProps {
-	onApply: (formData: any) => void;
-	onReset: () => void;
+  	onApply: (formData: any) => void;
+  	onReset: () => void;
 }
 
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ onApply, onReset }) => {
   	const [isOpen, setIsOpen] = useState(false);
   	const [formData, setFormData] = useState({
-    	fontFamily: fontFamilyOptions[0],
-    	fontSize: fontSizeOptions[0],
-    	fontColor: fontColors[0],
-    	backgroundColor: backgroundColors[0],
-    	contentWidth: contentWidthArr[0],
+		fontFamily: defaultArticleState.fontFamilyOption,
+		fontSize: defaultArticleState.fontSizeOption,
+		fontColor: defaultArticleState.fontColor,
+		backgroundColor: defaultArticleState.backgroundColor,
+		contentWidth: defaultArticleState.contentWidth,
   	});
 
-  	const [error, setError] = useState<string | null>(null);
+  	const menuRef = useRef<HTMLDivElement>(null);
 
   	const handleToggle = () => {
-		setIsOpen(!isOpen);
+    	setIsOpen(!isOpen);
   	};
+
+  	const handleClickOutside = (event: MouseEvent) => {
+    	if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+      		setIsOpen(false);
+    	}
+  	};
+
+  	useEffect(() => {
+    	document.addEventListener('mousedown', handleClickOutside);
+    	return () => {
+      		document.removeEventListener('mousedown', handleClickOutside);
+    	};
+  	}, []);
 
   	const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     	const { name, value } = e.target;
     	setFormData((prevData) => ({
-    		...prevData,
+      		...prevData,
       	[name]: value,
     	}));
   	};
@@ -42,8 +57,8 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ onApply, o
     	setFormData((prevData) => ({
       		...prevData,
       		fontFamily: selected,
-		}));
-	};
+    	}));
+  	};
 
   	const handleFontSizeChange = (selected: OptionType) => {
     	setFormData((prevData) => ({
@@ -53,27 +68,17 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ onApply, o
   	};
 
   	const handleFontColorChange = (selected: OptionType) => {
-    	if (selected.value === formData.backgroundColor.value) {
-      		setError('Цвет текста и цвет фона не могут быть одинаковыми.');
-      		return;
-    	}
     	setFormData((prevData) => ({
-      		...prevData,
+    	  	...prevData,
       		fontColor: selected,
     	}));
-    	setError(null);
-	};
+  	};
 
   	const handleBackgroundColorChange = (selected: OptionType) => {
-    	if (selected.value === formData.fontColor.value) {
-      		setError('Цвет текста и цвет фона не могут быть одинаковыми.');
-      		return;
-    	};
     	setFormData((prevData) => ({
-      		...prevData,
+    		...prevData,
       		backgroundColor: selected,
     	}));
-    	setError(null);
   	};
 
   	const handleContentWidthChange = (selected: OptionType) => {
@@ -85,41 +90,53 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ onApply, o
 
   	const handleSubmit = (e: FormEvent) => {
     	e.preventDefault();
-    	if (formData.fontColor.value === formData.backgroundColor.value) {
-      		setError('Цвет текста и цвет фона не могут быть одинаковыми.');
-      		return;
-    	};
     	onApply(formData);
-    	setError(null);
   	};
 
   	const handleReset = () => {
     	setFormData({
-      		fontFamily: fontFamilyOptions[0],
-      		fontSize: fontSizeOptions[0],
-      		fontColor: fontColors[0],
-      		backgroundColor: backgroundColors[0],
-      		contentWidth: contentWidthArr[0],
+    		fontFamily: defaultArticleState.fontFamilyOption,
+      		fontSize: defaultArticleState.fontSizeOption,
+      		fontColor: defaultArticleState.fontColor,
+      		backgroundColor: defaultArticleState.backgroundColor,
+      		contentWidth: defaultArticleState.contentWidth,
     	});
     	onReset();
-    	setError(null);
- 	};
+  	};
+
+  	const renderColorOption = (option: OptionType) => (
+    	<div
+      	style={{
+        	display: 'flex',
+        	alignItems: 'center',
+        	cursor: option.isDisabled ? 'not-allowed' : 'pointer',
+      	}}
+      	aria-disabled={option.isDisabled}
+    	>
+      	<Text family={option.className}>{option.title}</Text>
+    	</div>
+  	);
 
   	return (
     	<>
       		<ArrowButton onClick={handleToggle} isOpen={isOpen} />
-      		<aside className={`${styles.container} ${isOpen ? styles.open : ''}`}>
+      			<aside ref={menuRef} className={`${styles.container} ${isOpen ? styles.open : ''}`}>
         		<h2 className={styles.header}>ЗАДАЙТЕ ПАРАМЕТРЫ</h2>
         		<form className={styles.form} onSubmit={handleSubmit} onReset={handleReset}>
-          		<div className={styles.field}>
-            	<Select
-             		selected={formData.fontFamily}
-              		onChange={handleFontChange}
-              		options={fontFamilyOptions}
-              		title="Шрифт"
-              		placeholder="Выберите шрифт"
-            	/>
-          		</div>
+          			<div className={styles.field}>
+            			<Select
+              				selected={formData.fontFamily}
+              				onChange={handleFontChange}
+              				options={fontFamilyOptions}
+              				title="Шрифт"
+              				placeholder="Выберите шрифт"
+              				renderOption={(option) => (
+                				<Text family={option.className}>
+                 	 				{option.title}
+                				</Text>
+              				)}
+            			/>
+          			</div>
           			<div className={styles.field}>
             			<RadioGroup
               				name="fontSize"
@@ -131,75 +148,56 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({ onApply, o
           			</div>
           			<div className={styles.field}>
             			<Select
-              				selected={formData.fontColor}
-              				onChange={handleFontColorChange}
-              				options={fontColors}
+             	 			selected={formData.fontColor}
+             				onChange={handleFontColorChange}
+              				options={fontColors.map((option) => ({
+                				...option,
+                				isDisabled: option.value === formData.backgroundColor.value,
+              				}))}
               				title="Цвет шрифта"
               				placeholder="Выберите цвет"
-              				renderOption={(option) => (
-                				<div style={{ display: 'flex', alignItems: 'center' }}>
-                  					<div
-                    					style={{
-                      						width: 20,
-                      						height: 20,
-                      						backgroundColor: option.value,
-                      						marginRight: 8,
-                    					}}
-                  					></div>
-                  				{option.title}
-                				</div>
-              				)}
+              				renderOption={(option) => renderColorOption(option)}
             			/>
-         			</div>
-          		<Separator /> { }
+          			</div>
+          			<Separator />
           			<div className={styles.field}>
             			<Select
               				selected={formData.backgroundColor}
               				onChange={handleBackgroundColorChange}
-              				options={backgroundColors}
+              				options={backgroundColors.map((option) => ({
+                				...option,
+                				isDisabled: option.value === formData.fontColor.value,
+              				}))}
               				title="Цвет фона"
               				placeholder="Выберите цвет фона"
+              				renderOption={(option) => renderColorOption(option)}
+            			/>
+          			</div>
+          			<div className={styles.field}>
+            			<Select
+              				selected={formData.contentWidth}
+              				onChange={handleContentWidthChange}
+              				options={contentWidthArr}
+              				title="Ширина контента"
+              				placeholder="Выберите ширину"
               				renderOption={(option) => (
                 				<div style={{ display: 'flex', alignItems: 'center' }}>
-                  					<div
-                    					style={{
-                      						width: 20,
-                      						height: 20,
-                      						backgroundColor: option.value,
-                      						marginRight: 8,
-                    					}}
-                  					></div>
-                  				{option.title}
+                 			 		<img
+                    					src={option.value === '1394px' ? wideIcon : narrowIcon}
+                    					alt={option.title}
+                    					style={{ width: 20, height: 20, marginRight: 8 }}
+                  					/>
+                  					{option.title}
                 				</div>
               				)}
             			/>
           			</div>
-          		<div className={styles.field}>
-            		<Select
-              			selected={formData.contentWidth}
-              			onChange={handleContentWidthChange}
-              			options={contentWidthArr}
-              			title="Ширина контента"
-              			placeholder="Выберите ширину"
-              			renderOption={(option) => (
-                		<div style={{ display: 'flex', alignItems: 'center' }}>
-                  			<img
-                    			src={option.value === '1394px' ? wideIcon : narrowIcon}
-                    			alt={option.title}
-                    			style={{ width: 20, height: 20, marginRight: 8 }}
-                  			/>
-                  		{option.title}
-                		</div>
-              		)}
-            		/>
-         		</div>
-          		{error && <div className={styles.error}>{error}</div>}
           			<div className={styles.bottomContainer}>
             			<Button title="Сбросить" type="reset" />
             			<Button title="Применить" type="submit" />
           			</div>
-       			</form>
+        		</form>
       		</aside>
-    	</>
+   		</>
   	);
 };

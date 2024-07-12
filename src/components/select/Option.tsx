@@ -35,8 +35,26 @@ export const Option = (props: OptionProps) => {
       		tabIndex={0}
       		data-testid={`select-option-${option.value}`}
       		ref={optionRef}
-    		>
-      		{renderOption ? renderOption(option) : <Text>{option.title}</Text>}
+      		aria-disabled={option.isDisabled}
+    	>
+      		{renderOption ? (
+        		renderOption(option)
+      		) : (
+        		<>
+          			<div
+            			className={styles.colorBox}
+            			style={{
+              				backgroundColor: option.value,
+              				border: option.value === '#FFFFFF' ? '1px solid #000' : 'none',
+            			}}
+          			>
+            			{option.isDisabled && (
+              				<div className={styles.disabledOverlay}></div>
+            			)}
+          			</div>
+          			<Text>{option.title}</Text>
+        		</>
+      		)}
     	</li>
   	);
 };
