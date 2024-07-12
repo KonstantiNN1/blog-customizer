@@ -9,14 +9,15 @@
 	width: 100px;
 	height: 100px;
 	background-color: #000000;
-	border-right: 1px;
+	border-right: 1px solid #000;
 	transition: transform 0.5s ease;
+	cursor: pointer;
 }
-
-.container_open {
-	transform: translate(616px);
+  
+.container.open {
+	transform: translateX(654px);
 }
-
+  
 .arrow {
 	flex-shrink: 0;
 	width: 48px;
@@ -24,7 +25,7 @@
 	transform: rotate(180deg);
 	transition: transform 0.5s ease;
 }
-
-.arrow_open {
+  
+.arrowOpen {
 	transform: rotate(0deg);
 }

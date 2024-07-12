@@ -22,7 +22,7 @@ type TextProps = {
 	/** Выравнивание текста */
 	align?: 'center' | 'left';
 	/** font-family текста */
-	family?: FontFamiliesClasses;
+	family?: FontFamiliesClasses | string;
 	/** Булевая пропса, делает динамическим только семью шрифтов и цвет */
 	dynamicLite?: boolean;
 };
